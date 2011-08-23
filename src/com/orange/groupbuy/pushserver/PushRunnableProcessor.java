@@ -16,5 +16,5 @@ public class PushRunnableProcessor extends CommonProcessor {
 	public MongoDBClient getMongoDBClient() {
 		return mongoClient;
 	}
-	
+
 }
