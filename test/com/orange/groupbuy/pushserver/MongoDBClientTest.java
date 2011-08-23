@@ -1,25 +1,17 @@
 package com.orange.groupbuy.pushserver;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.text.ParseException;
 import java.util.Random;
 
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import com.orange.common.mongodb.MongoDBClient;
+import com.orange.common.utils.DateUtil;
 import com.orange.groupbuy.constant.DBConstants;
-import com.orange.groupbuy.dao.Product;
-import com.orange.groupbuy.manager.ProductManager;
-import com.orange.groupbuy.manager.PushMessageManager;
-import com.orange.groupbuy.manager.UserManager;
 
 public class MongoDBClientTest {
 
@@ -69,4 +61,22 @@ public class MongoDBClientTest {
 
             mongoClient.updateAll(DBConstants.T_PUSH_MESSAGE, query, update);
     }
+	
+	@Test
+	public void testDate() throws ParseException{
+	    boolean isMiddleAM = false;
+        boolean isMiddlePM = false;
+
+        if (DateUtil.isMiddleDate(PushConstants.START_DATE_HOUR_AM, PushConstants.START_DATE_MINUTE_AM, PushConstants.END_DATE_HOUR_AM, PushConstants.END_DATE_MINUTE_AM)){
+            isMiddleAM =  true;
+        }
+
+        if (DateUtil.isMiddleDate(PushConstants.START_DATE_HOUR_PM, PushConstants.START_DATE_MINUTE_PM, PushConstants.END_DATE_HOUR_PM, PushConstants.END_DATE_MINUTE_PM)){
+            isMiddlePM = true;
+        }
+        
+        if(isMiddleAM || isMiddlePM) {
+            System.out.println("true");
+        } 
+	}
 }

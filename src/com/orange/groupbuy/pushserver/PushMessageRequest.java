@@ -13,7 +13,6 @@ import com.orange.groupbuy.constant.DBConstants;
 import com.orange.groupbuy.dao.PushMessage;
 import com.orange.groupbuy.manager.PushMessageManager;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class PushMessageRequest.
  */
@@ -48,6 +47,7 @@ public class PushMessageRequest extends BasicProcessorRequest {
 		startTime = new Date();
 
 		try {
+		    /*
 		    // send push request to iPhone
 	        result = sendiPhonePushMessage(pushMessage);
 
@@ -57,7 +57,7 @@ public class PushMessageRequest extends BasicProcessorRequest {
 	            setPushMessageStatisticData(pushMessage);
 	            PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
 	            return;
-	        }
+	        }*/
 
 	        // update status and result code
 	        setPushMessageStatisticData(pushMessage);
