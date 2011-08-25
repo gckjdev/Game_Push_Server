@@ -10,6 +10,7 @@ import com.orange.common.urbanairship.BasicService;
 import com.orange.common.urbanairship.ErrorCode;
 import com.orange.common.urbanairship.PushMessageService;
 import com.orange.groupbuy.constant.DBConstants;
+import com.orange.groupbuy.constant.PushNotificationConstants;
 import com.orange.groupbuy.dao.PushMessage;
 import com.orange.groupbuy.manager.PushMessageManager;
 
@@ -85,9 +86,9 @@ public class PushMessageRequest extends BasicProcessorRequest {
         
         userInfo.put(DBConstants.F_PUSH_MESSAGE_USER_ID, pushMessage.getUserId());
         
-        BasicService pushService = PushMessageService.createService(PushConstants.APPLICATION_KEY, 
-                                                                    PushConstants.APPLICATION_SECRET, 
-                                                                    PushConstants.APPLICATION_MASTER_SECRET,
+        BasicService pushService = PushMessageService.createService(PushNotificationConstants.APPLICATION_KEY, 
+                                                                    PushNotificationConstants.APPLICATION_SECRET, 
+                                                                    PushNotificationConstants.APPLICATION_MASTER_SECRET,
                                                                     deviceToken, badge, alertMessage, sound, userInfo);
         int result = pushService.handleServiceRequest();
 
