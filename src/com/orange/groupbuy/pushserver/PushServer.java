@@ -23,9 +23,11 @@ public class PushServer {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    public static void main(final String[] args) throws InstantiationException, IllegalAccessException {
+    public static void main(final String[] args) {
 
-        ScheduleServer scheduleServer = new ScheduleServer(PushRunnableProcessor.class);
+//        ScheduleServer scheduleServer = new ScheduleServer(PushRunnableProcessor.class);
+        
+        ScheduleServer scheduleServer = new ScheduleServer(new PushRunnableProcessor());
         
         scheduleServer.setMax_request_per_second(MAX_PUSH_PER_SECOND);
         scheduleServer.setMax_thread_num(MAX_THREAD_NUM);
