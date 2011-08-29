@@ -3,6 +3,8 @@ package com.orange.groupbuy.pushserver;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 import com.orange.common.mongodb.MongoDBClient;
 import com.orange.common.processor.BasicProcessorRequest;
 import com.orange.common.processor.CommonProcessor;
@@ -11,6 +13,7 @@ import com.orange.common.urbanairship.ErrorCode;
 import com.orange.common.urbanairship.PushMessageService;
 import com.orange.groupbuy.constant.DBConstants;
 import com.orange.groupbuy.constant.PushNotificationConstants;
+import com.orange.groupbuy.constant.ServiceConstant;
 import com.orange.groupbuy.dao.PushMessage;
 import com.orange.groupbuy.manager.PushMessageManager;
 
@@ -18,24 +21,27 @@ import com.orange.groupbuy.manager.PushMessageManager;
  * The Class PushMessageRequest.
  */
 public class PushMessageRequest extends BasicProcessorRequest {
-    /** The push message. */
+
     private PushMessage pushMessage;
-
-    /** The start time. */
     private Date startTime;
-
-    /** The result. */
     private int result;
 
-    /**
-     * Instantiates a new push message request.
-     *
-     * @param pushMessage the push message
-     */
+    public static final Logger log = Logger.getLogger(PushMessageRequest.class.getName());
+
     public PushMessageRequest(final PushMessage pushMessage) {
         super();
         this.pushMessage = pushMessage;
     }
+    
+    
+
+    @Override
+    public String toString() {
+        return "PushMessageRequest [pushMessage=" + pushMessage.toString() +
+                "]";
+    }
+
+
 
     /* (non-Javadoc)
      * @see com.orange.common.processor.BasicProcessorRequest@execute
@@ -48,17 +54,21 @@ public class PushMessageRequest extends BasicProcessorRequest {
 		startTime = new Date();
 
 		try {
-		    /*
+		    
 		    // send push request to iPhone
-	        result = sendiPhonePushMessage(pushMessage);
+		    result = sendiPhonePushMessage(pushMessage);
 
 	        if (result != ErrorCode.ERROR_SUCCESS) {
-	            // update pushMessage status to failure
-	            mainProcessor.warning(this, "Fail to push message.");
+	            log.warn("Fail to push message, productId=" + pushMessage.getProductId() +
+	                    ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
 	            setPushMessageStatisticData(pushMessage);
 	            PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
 	            return;
-	        }*/
+	        }
+	        else{
+                log.debug("Push message OK!, productId=" + pushMessage.getProductId() +
+                        ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
+	        }
 
 	        // update status and result code
 	        setPushMessageStatisticData(pushMessage);
@@ -66,7 +76,7 @@ public class PushMessageRequest extends BasicProcessorRequest {
 		}
 		catch (Exception e) {
             mainProcessor.severe(this, "push Message = "+ pushMessage.toString() +", but catch exception = "+e.toString());
-            e.printStackTrace();
+            PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
         }
 	}
 
@@ -76,23 +86,20 @@ public class PushMessageRequest extends BasicProcessorRequest {
      * @param pushMessage the push message
      * @return the int
      */
-    private int sendiPhonePushMessage(PushMessage pushMessage) {
+    private int sendiPhonePushMessage(PushMessage message) {
 
-        int badge = 0;
+        int badge = 1;
         String sound = "default";
-        String deviceToken = pushMessage.getDeviceToken();
-        String alertMessage = pushMessage.getPushBody();
+        String deviceToken = message.getDeviceToken();
+        String alertMessage = message.getPushIphone();
         HashMap<String, Object> userInfo = new HashMap<String, Object>();
-        
-        userInfo.put(DBConstants.F_PUSH_MESSAGE_USER_ID, pushMessage.getUserId());
-        
-        BasicService pushService = PushMessageService.createService(PushNotificationConstants.APPLICATION_KEY, 
-                                                                    PushNotificationConstants.APPLICATION_SECRET, 
+
+        userInfo.put(ServiceConstant.PARA_PRODUCT, message.getProductId());
+        BasicService pushService = PushMessageService.createService(PushNotificationConstants.APPLICATION_KEY,
+                                                                    PushNotificationConstants.APPLICATION_SECRET,
                                                                     PushNotificationConstants.APPLICATION_MASTER_SECRET,
                                                                     deviceToken, badge, alertMessage, sound, userInfo);
-        int result = pushService.handleServiceRequest();
-
-        return result;
+        return pushService.handleServiceRequest();
     }
 
     /**
@@ -100,10 +107,10 @@ public class PushMessageRequest extends BasicProcessorRequest {
      *
      * @param pushMessage the new push message statistic data
      */
-    private void setPushMessageStatisticData(final PushMessage pushMessage) {
-        pushMessage.put(DBConstants.F_PUSH_MESSAGE_START_DATE, startTime);
-        pushMessage.put(DBConstants.F_PUSH_MESSAGE_FINISH_DATE, new Date());
-        pushMessage.put(DBConstants.F_PUSH_MESSAGE_ERROR_CODE, result);
+    private void setPushMessageStatisticData(final PushMessage message) {
+        message.put(DBConstants.F_PUSH_MESSAGE_START_DATE, startTime);
+        message.put(DBConstants.F_PUSH_MESSAGE_FINISH_DATE, new Date());
+        message.put(DBConstants.F_PUSH_MESSAGE_ERROR_CODE, result);
     }
 
 }

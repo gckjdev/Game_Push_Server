@@ -27,12 +27,14 @@ public class PushServer {
 
 //        ScheduleServer scheduleServer = new ScheduleServer(PushRunnableProcessor.class);
         
+        // TODO , print version string
+
         ScheduleServer scheduleServer = new ScheduleServer(new PushRunnableProcessor());
-        
+
         scheduleServer.setMax_request_per_second(MAX_PUSH_PER_SECOND);
         scheduleServer.setMax_thread_num(MAX_THREAD_NUM);
-        scheduleServer.setSleep_interval_for_no_request(PUSH_INTERVAL);
-        
+        scheduleServer.setSleep_interval_for_no_request(PUSH_INTERVAL); // TODO change back
+
         Thread server = new Thread(scheduleServer);
         server.start();
     }

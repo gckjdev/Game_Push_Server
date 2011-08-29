@@ -35,6 +35,14 @@ public class MongoDBClientTest {
 		seed = new Random();
 	}
 
+	@Test
+	public void testLength(){
+	    String str = "abc";
+	    System.out.println("str=" + str + ", len=" + str.length());
+        str = "你好";
+        System.out.println("str=" + str + ", len=" + str.length());
+	}
+	
 	
 	@Test
 	public void insertPushMessage() {
@@ -42,7 +50,7 @@ public class MongoDBClientTest {
 	    for (int i = 0; i < 100; i++) {
 	        BasicDBObject obj = new BasicDBObject();
 	        obj.put(DBConstants.F_PUSH_MESSAGE_STATUS, DBConstants.C_PUSH_MESSAGE_STATUS_NOT_RUNNING);
-	        obj.put(DBConstants.F_PUSH_MESSAGE_USER_ID, Integer.toString(i));
+	        obj.put(DBConstants.F_FOREIGN_USER_ID, Integer.toString(i));
 	        mongoClient.insert(DBConstants.T_PUSH_MESSAGE, obj);
 	    }
 	}

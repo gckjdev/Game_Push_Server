@@ -22,11 +22,14 @@ public class PushRunnableProcessor extends ScheduleServerProcessor {
         PushMessageManager.resetAllRunningMessage(mongoClient);
     }
 
+    
+    
+
     @Override
     public final BasicProcessorRequest getProcessorRequest() {
         PushMessage pushMessage = PushMessageManager.findMessageForPush(mongoClient);
         if (pushMessage == null) {
-            log.info("no message to push.");
+            log.debug("No message to push.");
             return null;
         }
         PushMessageRequest request = new PushMessageRequest(pushMessage);
