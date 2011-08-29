@@ -22,18 +22,22 @@ import com.orange.groupbuy.manager.PushMessageManager;
  */
 public class PushMessageRequest extends BasicProcessorRequest {
 
+    public static final int MAX_PUSH_PER_SECOND = 3;
+    public static final int SLEEP_INTERVAL = 1000;
+    private static int pushCounter;
+    private static long startCouterTime;
+
     private PushMessage pushMessage;
     private Date startTime;
     private int result;
 
+
     public static final Logger log = Logger.getLogger(PushMessageRequest.class.getName());
 
-    public PushMessageRequest(final PushMessage pushMessage) {
+    public PushMessageRequest(final PushMessage message) {
         super();
-        this.pushMessage = pushMessage;
+        this.pushMessage = message;
     }
-    
-    
 
     @Override
     public String toString() {
@@ -47,45 +51,61 @@ public class PushMessageRequest extends BasicProcessorRequest {
      * @see com.orange.common.processor.BasicProcessorRequest@execute
      */
     @Override
-	public void execute(CommonProcessor mainProcessor) {
-        
+    public void execute(CommonProcessor mainProcessor) {
+
         MongoDBClient mongoClient = mainProcessor.getMongoDBClient();
 
-		startTime = new Date();
+    	startTime = new Date();
 
-		try {
-		    
-		    // send push request to iPhone
-		    result = sendiPhonePushMessage(pushMessage);
+    	try {
+    	    result = sendiPhonePushMessage(pushMessage);
 
-	        if (result != ErrorCode.ERROR_SUCCESS) {
-	            log.warn("Fail to push message, productId=" + pushMessage.getProductId() +
-	                    ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
-	            setPushMessageStatisticData(pushMessage);
-	            PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
-	            return;
-	        }
-	        else{
+            if (result != ErrorCode.ERROR_SUCCESS) {
+                log.warn("Fail to push message, productId=" + pushMessage.getProductId() +
+                        ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
+                setPushMessageStatisticData(pushMessage);
+                PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
+                return;
+            }
+            else if (result == ErrorCode.ERROR_SUCCESS) {
                 log.debug("Push message OK!, productId=" + pushMessage.getProductId() +
                         ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
-	        }
+            }
 
-	        // update status and result code
-	        setPushMessageStatisticData(pushMessage);
-	        PushMessageManager.pushMessageClose(mongoClient, pushMessage);
-		}
-		catch (Exception e) {
-            mainProcessor.severe(this, "push Message = "+ pushMessage.toString() +", but catch exception = "+e.toString());
+            setPushMessageStatisticData(pushMessage);
+            PushMessageManager.pushMessageClose(mongoClient, pushMessage);
+
+//            flowControl();
+    	}
+    	catch (Exception e) {
+            mainProcessor.severe(this, "push Message = " + pushMessage.toString() + ", but catch exception = " + e.toString());
             PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
         }
-	}
+    }
 
-    /**
-     * Send iphone push message.
-     *
-     * @param pushMessage the push message
-     * @return the int
-     */
+    private void flowControl() {
+        try {
+            pushCounter++;
+
+            if (pushCounter == 1) {
+                startCouterTime = System.currentTimeMillis();
+            }
+
+            if (pushCounter == MAX_PUSH_PER_SECOND) {
+                long duration = System.currentTimeMillis() - startCouterTime;
+                if (duration < SLEEP_INTERVAL) {
+                    long sleepTime = SLEEP_INTERVAL - duration;
+                    log.info("PushServer sleep " + sleepTime + " ms for flow control");
+                    Thread.sleep(sleepTime);
+                }
+                pushCounter = 0;
+            }
+        }
+        catch (InterruptedException e) {
+            log.fatal("<ScheduleServer> catch Exception while running. exception=" + e.toString());
+        }
+    }
+
     private int sendiPhonePushMessage(PushMessage message) {
 
         int badge = 1;
@@ -102,11 +122,6 @@ public class PushMessageRequest extends BasicProcessorRequest {
         return pushService.handleServiceRequest();
     }
 
-    /**
-     * Sets the push message statistic data.
-     *
-     * @param pushMessage the new push message statistic data
-     */
     private void setPushMessageStatisticData(final PushMessage message) {
         message.put(DBConstants.F_PUSH_MESSAGE_START_DATE, startTime);
         message.put(DBConstants.F_PUSH_MESSAGE_FINISH_DATE, new Date());

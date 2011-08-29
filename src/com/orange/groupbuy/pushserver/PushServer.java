@@ -1,39 +1,37 @@
 package com.orange.groupbuy.pushserver;
 
+import org.apache.log4j.Logger;
+
+import com.orange.common.mongodb.MongoDBClient;
 import com.orange.common.processor.ScheduleServer;
+import com.orange.groupbuy.constant.DBConstants;
 
 /**
  * The Class PushServer.
  */
 public class PushServer {
 
-    /** The Constant MAX_THREAD_NUM. */
     static final int MAX_THREAD_NUM = 5;
 
-    /** The Constant MAX_PUSH_PER_SECOND. */
     static final int MAX_PUSH_PER_SECOND = 20;
 
-    /** The Constant PUSH_INTERVAL. */
     static final int PUSH_INTERVAL = 1000;
 
-    /**
-     * The main method.
-     *
-     * @param args the arguments
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     */
+    public static final String VERSION_STRING = "0.9 Beta Build 20110829-01";
+
+    public static final Logger log = Logger.getLogger(PushServer.class.getName());
+
+    public static MongoDBClient mongoClient = new MongoDBClient(DBConstants.D_GROUPBUY);
+
+
     public static void main(final String[] args) {
 
-//        ScheduleServer scheduleServer = new ScheduleServer(PushRunnableProcessor.class);
-        
-        // TODO , print version string
+        log.info("PushServer start... version " + VERSION_STRING);
 
-        ScheduleServer scheduleServer = new ScheduleServer(new PushRunnableProcessor());
-
+        ScheduleServer scheduleServer = new ScheduleServer(new PushRunnableProcessor(mongoClient));
         scheduleServer.setMax_request_per_second(MAX_PUSH_PER_SECOND);
         scheduleServer.setMax_thread_num(MAX_THREAD_NUM);
-        scheduleServer.setSleep_interval_for_no_request(PUSH_INTERVAL); // TODO change back
+        scheduleServer.setSleep_interval_for_no_request(PUSH_INTERVAL);
 
         Thread server = new Thread(scheduleServer);
         server.start();

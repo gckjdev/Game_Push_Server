@@ -4,26 +4,27 @@ import com.orange.common.mongodb.MongoDBClient;
 import com.orange.common.processor.BasicProcessorRequest;
 import com.orange.common.processor.ScheduleServerProcessor;
 import com.orange.common.utils.DateUtil;
-import com.orange.groupbuy.constant.DBConstants;
 import com.orange.groupbuy.dao.PushMessage;
 import com.orange.groupbuy.manager.PushMessageManager;
 
 public class PushRunnableProcessor extends ScheduleServerProcessor {
 
-	public static MongoDBClient mongoClient = new MongoDBClient(DBConstants.D_GROUPBUY);
+    private MongoDBClient mongoClient;
 
-	@Override
+    public PushRunnableProcessor(MongoDBClient mongoDBClient) {
+        super();
+        this.mongoClient = mongoDBClient;
+    }
+
+    @Override
     public final MongoDBClient getMongoDBClient() {
-		return mongoClient;
-	}
+        return mongoClient;
+    }
 
     @Override
     public final void resetAllRunningMessage() {
         PushMessageManager.resetAllRunningMessage(mongoClient);
     }
-
-    
-    
 
     @Override
     public final BasicProcessorRequest getProcessorRequest() {
@@ -42,17 +43,17 @@ public class PushRunnableProcessor extends ScheduleServerProcessor {
         boolean isMiddleAM = false;
         boolean isMiddlePM = false;
 
-        if (DateUtil.isMiddleDate(PushConstants.START_DATE_HOUR_AM, PushConstants.START_DATE_MINUTE_AM, PushConstants.END_DATE_HOUR_AM, PushConstants.END_DATE_MINUTE_AM)){
+        if (DateUtil.isMiddleDate(PushConstants.START_DATE_HOUR_AM, PushConstants.START_DATE_MINUTE_AM, PushConstants.END_DATE_HOUR_AM, PushConstants.END_DATE_MINUTE_AM)) {
             isMiddleAM =  true;
         }
 
-        if (DateUtil.isMiddleDate(PushConstants.START_DATE_HOUR_PM, PushConstants.START_DATE_MINUTE_PM, PushConstants.END_DATE_HOUR_PM, PushConstants.END_DATE_MINUTE_PM)){
+        if (DateUtil.isMiddleDate(PushConstants.START_DATE_HOUR_PM, PushConstants.START_DATE_MINUTE_PM, PushConstants.END_DATE_HOUR_PM, PushConstants.END_DATE_MINUTE_PM)) {
             isMiddlePM = true;
         }
-        
-        if(isMiddleAM || isMiddlePM) {
+
+        if (isMiddleAM || isMiddlePM) {
             return true;
-        } 
+        }
         else {
             log.warn("current datetime is out of process time, can not process request.");
             return false;
