@@ -70,17 +70,24 @@ public class PushMessageRequest extends BasicProcessorRequest {
             else if (result == ErrorCode.ERROR_SUCCESS) {
                 log.debug("Push message OK!, productId=" + pushMessage.getProductId() +
                         ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
+
+                setPushMessageStatisticData(pushMessage);
+                PushMessageManager.pushMessageClose(mongoClient, pushMessage);
             }
 
-            setPushMessageStatisticData(pushMessage);
-            PushMessageManager.pushMessageClose(mongoClient, pushMessage);
-
-//            flowControl();
+            flowControl();
     	}
     	catch (Exception e) {
             mainProcessor.severe(this, "push Message = " + pushMessage.toString() + ", but catch exception = " + e.toString());
             PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
         }
+
+//    	try {
+//            Thread.sleep(10);
+//        }
+//    	catch (InterruptedException e) {
+//    	    log.debug("for test");
+//        }
     }
 
     private void flowControl() {
@@ -95,6 +102,7 @@ public class PushMessageRequest extends BasicProcessorRequest {
                 long duration = System.currentTimeMillis() - startCouterTime;
                 if (duration < SLEEP_INTERVAL) {
                     long sleepTime = SLEEP_INTERVAL - duration;
+                    log.info("duration " + duration + " ms ");
                     log.info("PushServer sleep " + sleepTime + " ms for flow control");
                     Thread.sleep(sleepTime);
                 }

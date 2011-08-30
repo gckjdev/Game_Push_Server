@@ -29,9 +29,9 @@ public class PushServer {
         log.info("PushServer start... version " + VERSION_STRING);
 
         ScheduleServer scheduleServer = new ScheduleServer(new PushRunnableProcessor(mongoClient));
-        scheduleServer.setMax_request_per_second(MAX_PUSH_PER_SECOND);
-        scheduleServer.setMax_thread_num(MAX_THREAD_NUM);
-        scheduleServer.setSleep_interval_for_no_request(PUSH_INTERVAL);
+        scheduleServer.setFrequency(MAX_PUSH_PER_SECOND);
+        scheduleServer.setThreadNum(MAX_THREAD_NUM);
+        scheduleServer.setInterval(PUSH_INTERVAL);
 
         Thread server = new Thread(scheduleServer);
         server.start();
