@@ -14,8 +14,8 @@ public class PushConstants {
     public static final int END_DATE_MINUTE_AM = 0;
 
     public static final int START_DATE_HOUR_PM = 12;
-    public static final int START_DATE_MINUTE_PM = 30;
-    public static final int END_DATE_HOUR_PM = 19;
+    public static final int START_DATE_MINUTE_PM = 0;
+    public static final int END_DATE_HOUR_PM = 24;
     public static final int END_DATE_MINUTE_PM = 0;
 
 
