@@ -57,37 +57,39 @@ public class PushMessageRequest extends BasicProcessorRequest {
 
     	startTime = new Date();
 
-    	try {
-    	    result = sendiPhonePushMessage(pushMessage);
-
-            if (result != ErrorCode.ERROR_SUCCESS) {
-                log.warn("Fail to push message, productId=" + pushMessage.getProductId() +
-                        ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
-                setPushMessageStatisticData(pushMessage);
-                PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
-                return;
-            }
-            else if (result == ErrorCode.ERROR_SUCCESS) {
-                log.debug("Push message OK!, productId=" + pushMessage.getProductId() +
-                        ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
-
-                setPushMessageStatisticData(pushMessage);
-                PushMessageManager.pushMessageClose(mongoClient, pushMessage);
-            }
-
-            flowControl();
-    	}
-    	catch (Exception e) {
-            mainProcessor.severe(this, "push Message = " + pushMessage.toString() + ", but catch exception = " + e.toString());
-            PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
-        }
-
 //    	try {
-//            Thread.sleep(10);
+//    	    result = sendiPhonePushMessage(pushMessage);
+//
+//            if (result != ErrorCode.ERROR_SUCCESS) {
+//                log.warn("Fail to push message, productId=" + pushMessage.getProductId() +
+//                        ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
+//                setPushMessageStatisticData(pushMessage);
+//                PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
+//                return;
+//            }
+//            else if (result == ErrorCode.ERROR_SUCCESS) {
+//                log.debug("Push message OK!, productId=" + pushMessage.getProductId() +
+//                        ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
+//
+//                setPushMessageStatisticData(pushMessage);
+//                PushMessageManager.pushMessageClose(mongoClient, pushMessage);
+//            }
+//
+//            flowControl();
+//    	}
+//    	catch (Exception e) {
+//            mainProcessor.severe(this, "push Message = " + pushMessage.toString() + ", but catch exception = " + e.toString());
+//            PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
 //        }
-//    	catch (InterruptedException e) {
-//    	    log.debug("for test");
-//        }
+
+    	try {
+    	    setPushMessageStatisticData(pushMessage);
+            PushMessageManager.pushMessageClose(mongoClient, pushMessage);
+            Thread.sleep(10);
+        }
+    	catch (InterruptedException e) {
+    	    log.debug("for test");
+        }
     }
 
     private void flowControl() {
