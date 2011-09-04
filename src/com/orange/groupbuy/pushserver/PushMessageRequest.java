@@ -107,8 +107,7 @@ public class PushMessageRequest extends BasicProcessorRequest {
                 long duration = System.currentTimeMillis() - startCouterTime;
                 if (duration < SLEEP_INTERVAL) {
                     long sleepTime = SLEEP_INTERVAL - duration;
-                    log.info("duration " + duration + " ms ");
-                    log.info("PushServer sleep " + sleepTime + " ms for flow control");
+                    log.info("PushServer sleep " + sleepTime + " ms for flow control, push count = " + pushCounter);
                     Thread.sleep(sleepTime);
                 }
                 pushCounter = 0;
@@ -116,24 +115,11 @@ public class PushMessageRequest extends BasicProcessorRequest {
         }
         catch (InterruptedException e) {
             log.fatal("<ScheduleServer> catch Exception while running. exception=" + e.toString());
+            e.printStackTrace();
         }
     }
 
-    private int sendiPhonePushMessage(PushMessage message) {
-
-        int badge = 1;
-        String sound = "default";
-        String deviceToken = message.getDeviceToken();
-        String alertMessage = message.getPushIphone();
-        HashMap<String, Object> userInfo = new HashMap<String, Object>();
-
-        userInfo.put(ServiceConstant.PARA_PRODUCT, message.getProductId());
-        BasicService pushService = PushMessageService.createService(PushNotificationConstants.APPLICATION_KEY,
-                                                                    PushNotificationConstants.APPLICATION_SECRET,
-                                                                    PushNotificationConstants.APPLICATION_MASTER_SECRET,
-                                                                    deviceToken, badge, alertMessage, sound, userInfo);
-        return pushService.handleServiceRequest();
-    }
+    
 
     private void setPushMessageStatisticData(final PushMessage message) {
         message.put(DBConstants.F_PUSH_MESSAGE_START_DATE, startTime);
