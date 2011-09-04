@@ -85,14 +85,14 @@ public class PushMessageRequest extends BasicProcessorRequest {
             PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
         }
 
-//    	try {
-//    	    setPushMessageStatisticData(pushMessage);
-//            PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
-//            Thread.sleep(10);
-//        }
-//    	catch (InterruptedException e) {
-//    	    log.debug("for test");
-//        }
+    	try {
+    	    setPushMessageStatisticData(pushMessage);
+            PushMessageManager.pushMessageClose(mongoClient, pushMessage);
+            Thread.sleep(10);
+        }
+    	catch (InterruptedException e) {
+    	    log.debug("for test");
+        }
     }
 
     private void flowControl() {
@@ -118,8 +118,6 @@ public class PushMessageRequest extends BasicProcessorRequest {
             e.printStackTrace();
         }
     }
-
-    
 
     private void setPushMessageStatisticData(final PushMessage message) {
         message.put(DBConstants.F_PUSH_MESSAGE_START_DATE, startTime);
