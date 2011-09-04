@@ -16,6 +16,8 @@ import com.orange.groupbuy.constant.PushNotificationConstants;
 import com.orange.groupbuy.constant.ServiceConstant;
 import com.orange.groupbuy.dao.PushMessage;
 import com.orange.groupbuy.manager.PushMessageManager;
+import com.orange.groupbuy.push.action.ActionCreator;
+import com.orange.groupbuy.push.action.CommonAction;
 
 /**
  * The Class PushMessageRequest.
@@ -57,30 +59,31 @@ public class PushMessageRequest extends BasicProcessorRequest {
 
     	startTime = new Date();
 
-//    	try {
-//    	    result = sendiPhonePushMessage(pushMessage);
-//
-//            if (result != ErrorCode.ERROR_SUCCESS) {
-//                log.warn("Fail to push message, productId=" + pushMessage.getProductId() +
-//                        ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
-//                setPushMessageStatisticData(pushMessage);
-//                PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
-//                return;
-//            }
-//            else if (result == ErrorCode.ERROR_SUCCESS) {
-//                log.debug("Push message OK!, productId=" + pushMessage.getProductId() +
-//                        ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
-//
-//                setPushMessageStatisticData(pushMessage);
-//                PushMessageManager.pushMessageClose(mongoClient, pushMessage);
-//            }
-//
-//            flowControl();
-//    	}
-//    	catch (Exception e) {
-//            mainProcessor.severe(this, "push Message = " + pushMessage.toString() + ", but catch exception = " + e.toString());
-//            PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
-//        }
+    	try {
+    	    CommonAction action = ActionCreator.getAction(pushMessage);
+    	    result = action.sendMessage();
+
+            if (result != ErrorCode.ERROR_SUCCESS) {
+                log.warn("Fail to push message, productId=" + pushMessage.getProductId() +
+                        ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
+                setPushMessageStatisticData(pushMessage);
+                PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
+                return;
+            }
+            else if (result == ErrorCode.ERROR_SUCCESS) {
+                log.debug("Push message OK!, productId=" + pushMessage.getProductId() +
+                        ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
+
+                setPushMessageStatisticData(pushMessage);
+                PushMessageManager.pushMessageClose(mongoClient, pushMessage);
+            }
+
+            flowControl();
+    	}
+    	catch (Exception e) {
+            mainProcessor.severe(this, "push Message = " + pushMessage.toString() + ", but catch exception = " + e.toString());
+            PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
+        }
 
     	try {
     	    setPushMessageStatisticData(pushMessage);
