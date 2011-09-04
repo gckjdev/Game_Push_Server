@@ -49,6 +49,7 @@ public class MongoDBData {
             BasicDBObject obj = new BasicDBObject();
             ObjectId id = new ObjectId("4e5355560364950fcb95449a");
             obj.put(DBConstants.F_USERID, id);
+            obj.put(DBConstants.F_PUSH_MESSAGE_TYPE, DBConstants.C_PUSH_TYPE_EMAIL);
             mongoClient.insert(DBConstants.T_USER, obj);
 
             User user = UserManager.findUserByUserId(mongoClient, id.toString());
