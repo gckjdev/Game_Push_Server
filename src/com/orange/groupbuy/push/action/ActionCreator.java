@@ -10,7 +10,7 @@ public class ActionCreator {
         int messageType = pushMessage.getPushType();
         switch (messageType){
         case DBConstants.C_PUSH_TYPE_IPHONE:
-            return new PushiPhoneMessage(pushMessage);
+            //return new PushiPhoneMessage(pushMessage);
         case DBConstants.C_PUSH_TYPE_ANDROID:
             break;
         case DBConstants.C_PUSH_TYPE_EMAIL:
