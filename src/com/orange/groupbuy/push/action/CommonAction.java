@@ -6,5 +6,6 @@ public abstract class CommonAction {
 
     PushMessage pushMessage;
     
+    abstract public int validateMessage();
     abstract public int sendMessage(); 
 }
