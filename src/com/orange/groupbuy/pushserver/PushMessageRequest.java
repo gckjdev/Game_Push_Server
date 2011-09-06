@@ -60,18 +60,17 @@ public class PushMessageRequest extends BasicProcessorRequest {
     	startTime = new Date();
 
     	try {
-    	    CommonAction action = ActionCreator.getAction(pushMessage);
-    	    result = action.sendMessage();
-
+    	    result = sendMessage();
             if (result != ErrorCode.ERROR_SUCCESS) {
                 log.warn("Fail to push message, productId=" + pushMessage.getProductId() +
-                        ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
+                        ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken() 
+                        + ", result=" + result);
                 setPushMessageStatisticData(pushMessage);
-                PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
+                PushMessageManager.pushMessageFailure(mongoClient, pushMessage, result);
                 return;
             }
             else if (result == ErrorCode.ERROR_SUCCESS) {
-                log.debug("Push message OK!, productId=" + pushMessage.getProductId() +
+                log.info("Push message OK!, productId=" + pushMessage.getProductId() +
                         ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
 
                 setPushMessageStatisticData(pushMessage);
@@ -79,20 +78,31 @@ public class PushMessageRequest extends BasicProcessorRequest {
             }
 
             flowControl();
+
+            setPushMessageStatisticData(pushMessage);
+            PushMessageManager.pushMessageClose(mongoClient, pushMessage);
+
     	}
     	catch (Exception e) {
-            mainProcessor.severe(this, "push Message = " + pushMessage.toString() + ", but catch exception = " + e.toString());
-            PushMessageManager.pushMessageFailure(mongoClient, pushMessage);
+            log.fatal("process message = " + pushMessage.toString() + ", but catch exception = " + e.toString());
+            PushMessageManager.pushMessageFailure(mongoClient, pushMessage, ErrorCode.ERROR_PUSH_GENERAL_EXCEPTION);
         }
 
     	try {
-    	    setPushMessageStatisticData(pushMessage);
-            PushMessageManager.pushMessageClose(mongoClient, pushMessage);
-            Thread.sleep(10);
+            Thread.sleep(10);   // TODO why sleep 10 seconds here???
         }
     	catch (InterruptedException e) {
-    	    log.debug("for test");
+            log.fatal("strange sleep for " + pushMessage.toString() + ", catch exception = " + e.toString());
         }
+    }
+
+    private int sendMessage() {
+        CommonAction action = ActionCreator.getAction(pushMessage);
+        int result = action.validateMessage();
+        if (result != ErrorCode.ERROR_SUCCESS)
+            return result;
+        
+        return action.sendMessage();
     }
 
     private void flowControl() {

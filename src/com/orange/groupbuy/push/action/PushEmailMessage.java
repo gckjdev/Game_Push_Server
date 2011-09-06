@@ -22,4 +22,10 @@ public class PushEmailMessage extends CommonAction {
         return 0;
     }
 
+    @Override
+    public int validateMessage() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }
