@@ -9,9 +9,9 @@ import com.orange.common.mongodb.MongoDBClient;
 import com.orange.common.processor.BasicProcessorRequest;
 import com.orange.common.processor.CommonProcessor;
 import com.orange.common.urbanairship.BasicService;
-import com.orange.common.urbanairship.ErrorCode;
 import com.orange.common.urbanairship.PushMessageService;
 import com.orange.groupbuy.constant.DBConstants;
+import com.orange.groupbuy.constant.ErrorCode;
 import com.orange.groupbuy.constant.PushNotificationConstants;
 import com.orange.groupbuy.constant.ServiceConstant;
 import com.orange.groupbuy.dao.PushMessage;
@@ -66,7 +66,13 @@ public class PushMessageRequest extends BasicProcessorRequest {
                         ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken() 
                         + ", result=" + result);
                 setPushMessageStatisticData(pushMessage);
-                PushMessageManager.pushMessageFailure(mongoClient, pushMessage, result);
+                
+                if (canRetry(result)){
+                    PushMessageManager.pushMessageFailure(mongoClient, pushMessage, result);
+                }
+                else {
+                    PushMessageManager.pushMessageClose(mongoClient, pushMessage, result);                    
+                }
                 return;
             }
             else if (result == ErrorCode.ERROR_SUCCESS) {
@@ -74,26 +80,22 @@ public class PushMessageRequest extends BasicProcessorRequest {
                         ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
 
                 setPushMessageStatisticData(pushMessage);
-                PushMessageManager.pushMessageClose(mongoClient, pushMessage);
+                PushMessageManager.pushMessageClose(mongoClient, pushMessage, result);
             }
 
             flowControl();
-
-            setPushMessageStatisticData(pushMessage);
-            PushMessageManager.pushMessageClose(mongoClient, pushMessage);
-
     	}
     	catch (Exception e) {
-            log.fatal("process message = " + pushMessage.toString() + ", but catch exception = " + e.getMessage(), e);
-            PushMessageManager.pushMessageFailure(mongoClient, pushMessage, ErrorCode.ERROR_PUSH_GENERAL_EXCEPTION);
-        }
+            log.error("process message = " + pushMessage.toString() + ", but catch exception = " + e.toString(), e);
+            PushMessageManager.pushMessageFailure(mongoClient, pushMessage, ErrorCode.ERROR_GENERAL_EXCEPTION);
+        }    	
+    }
 
-    	try {
-            Thread.sleep(10);   // TODO why sleep 10 seconds here???
-        }
-    	catch (InterruptedException e) {
-            log.fatal("strange sleep for " + pushMessage.toString() + ", catch exception = " + e.getMessage(), e);
-        }
+    private boolean canRetry(int result) {
+        if (result == ErrorCode.ERROR_DEVICE_TOKEN_NULL)
+            return false;
+        else
+            return true;
     }
 
     private int sendMessage() {
