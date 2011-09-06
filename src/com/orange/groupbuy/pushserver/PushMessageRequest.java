@@ -134,7 +134,6 @@ public class PushMessageRequest extends BasicProcessorRequest {
     private void setPushMessageStatisticData(final PushMessage message) {
         message.put(DBConstants.F_PUSH_MESSAGE_START_DATE, startTime);
         message.put(DBConstants.F_PUSH_MESSAGE_FINISH_DATE, new Date());
-        message.put(DBConstants.F_PUSH_MESSAGE_ERROR_CODE, result);
     }
 
 }
