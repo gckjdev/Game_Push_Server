@@ -220,7 +220,7 @@
 			        </descriptorRefs>
 			        <archive>
 			            <manifest>
-			                <mainClass>com.orange.groupbuy.push.GroupBuyPushServer</mainClass>
+			                <mainClass>com.orange.groupbuy.pushserver.PushServer</mainClass>
 			            </manifest>
 			        </archive>
 			    </configuration>
