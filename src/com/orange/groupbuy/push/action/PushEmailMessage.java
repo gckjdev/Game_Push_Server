@@ -16,7 +16,8 @@ public class PushEmailMessage extends CommonAction {
     public int sendMessage() {
         String emailTitle = pushMessage.getPushSubject();
         String emailBody = pushMessage.getPushBody();
-        CommonMailSender testmail = new CommonMailSender("ouyongyong@163.com",emailTitle,emailBody);
+        String imageUrl = pushMessage.getImage();
+        CommonMailSender testmail = new CommonMailSender("ouyongyong@163.com",emailTitle,emailBody,imageUrl);
         testmail.send();
         return 0;
     }
