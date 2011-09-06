@@ -24,7 +24,7 @@ public class PushiPhoneMessage extends CommonAction {
         String alertMessage = pushMessage.getPushIphone();
         HashMap<String, Object> userInfo = new HashMap<String, Object>();
         
-        userInfo.put(ServiceConstant.PARA_PRODUCT, pushMessage.getProductId());
+        userInfo.put(ServiceConstant.PARA_ITEMID, pushMessage.getItemId());
         BasicService pushService = PushMessageService.createService(PushNotificationConstants.APPLICATION_KEY,
                                                                     PushNotificationConstants.APPLICATION_SECRET,
                                                                     PushNotificationConstants.APPLICATION_MASTER_SECRET,
