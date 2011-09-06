@@ -84,7 +84,7 @@ public class PushMessageRequest extends BasicProcessorRequest {
 
     	}
     	catch (Exception e) {
-            log.fatal("process message = " + pushMessage.toString() + ", but catch exception = " + e.toString());
+            log.fatal("process message = " + pushMessage.toString() + ", but catch exception = " + e.getMessage(), e);
             PushMessageManager.pushMessageFailure(mongoClient, pushMessage, ErrorCode.ERROR_PUSH_GENERAL_EXCEPTION);
         }
 
@@ -92,7 +92,7 @@ public class PushMessageRequest extends BasicProcessorRequest {
             Thread.sleep(10);   // TODO why sleep 10 seconds here???
         }
     	catch (InterruptedException e) {
-            log.fatal("strange sleep for " + pushMessage.toString() + ", catch exception = " + e.toString());
+            log.fatal("strange sleep for " + pushMessage.toString() + ", catch exception = " + e.getMessage(), e);
         }
     }
 
