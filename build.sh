@@ -6,4 +6,4 @@ cd ../Common_Java_GroupBuy
 mvn clean install
 
 cd ../GroupBuy_Push_Server
-mvn assembly:assembly
+mvn clean install
