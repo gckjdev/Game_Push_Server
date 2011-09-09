@@ -43,11 +43,13 @@ public class PushRunnableProcessor extends ScheduleServerProcessor {
         boolean isMiddleAM = false;
         boolean isMiddlePM = false;
 
-        if (DateUtil.isMiddleDate(PushConstants.START_DATE_HOUR_AM, PushConstants.START_DATE_MINUTE_AM, PushConstants.END_DATE_HOUR_AM, PushConstants.END_DATE_MINUTE_AM)) {
+        if (DateUtil.isMiddleDate(PushConstants.START_DATE_HOUR_AM, PushConstants.START_DATE_MINUTE_AM, 
+                PushConstants.END_DATE_HOUR_AM, PushConstants.END_DATE_MINUTE_AM, DateUtil.CHINA_TIMEZONE)) {
             isMiddleAM =  true;
         }
 
-        if (DateUtil.isMiddleDate(PushConstants.START_DATE_HOUR_PM, PushConstants.START_DATE_MINUTE_PM, PushConstants.END_DATE_HOUR_PM, PushConstants.END_DATE_MINUTE_PM)) {
+        if (DateUtil.isMiddleDate(PushConstants.START_DATE_HOUR_PM, PushConstants.START_DATE_MINUTE_PM, 
+                PushConstants.END_DATE_HOUR_PM, PushConstants.END_DATE_MINUTE_PM, DateUtil.CHINA_TIMEZONE)) {
             isMiddlePM = true;
         }
 
