@@ -29,6 +29,7 @@ public class PushMessageRequest extends BasicProcessorRequest {
     private static int pushCounter;
     private static long startCouterTime;
 
+    private MongoDBClient mongoClient;
     private PushMessage pushMessage;
     private Date startTime;
     private int result;
@@ -55,7 +56,7 @@ public class PushMessageRequest extends BasicProcessorRequest {
     @Override
     public void execute(CommonProcessor mainProcessor) {
 
-        MongoDBClient mongoClient = mainProcessor.getMongoDBClient();
+        mongoClient = mainProcessor.getMongoDBClient();
 
     	startTime = new Date();
 
@@ -68,7 +69,7 @@ public class PushMessageRequest extends BasicProcessorRequest {
                 setPushMessageStatisticData(pushMessage);
                 
                 if (canRetry(result)){
-                    PushMessageManager.pushMessageFailure(mongoClient, pushMessage, result);
+                    PushMessageManager.pushMessageRetry(mongoClient, pushMessage, result);
                 }
                 else {
                     PushMessageManager.pushMessageClose(mongoClient, pushMessage, result);                    
@@ -87,7 +88,7 @@ public class PushMessageRequest extends BasicProcessorRequest {
     	}
     	catch (Exception e) {
             log.error("process message = " + pushMessage.toString() + ", but catch exception = " + e.toString(), e);
-            PushMessageManager.pushMessageFailure(mongoClient, pushMessage, ErrorCode.ERROR_GENERAL_EXCEPTION);
+            PushMessageManager.pushMessageRetry(mongoClient, pushMessage, ErrorCode.ERROR_GENERAL_EXCEPTION);
         }    	
     }
 
@@ -99,7 +100,7 @@ public class PushMessageRequest extends BasicProcessorRequest {
     }
 
     private int sendMessage() {
-        CommonAction action = ActionCreator.getAction(pushMessage);
+        CommonAction action = ActionCreator.getAction(pushMessage, mongoClient);
         int result = action.validateMessage();
         if (result != ErrorCode.ERROR_SUCCESS)
             return result;

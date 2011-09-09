@@ -61,9 +61,9 @@ public class MongoDBData {
             day.setTime(new Date());
             day.set(Calendar.DAY_OF_MONTH, 11);
 
-            UserManager.addUserShoppingItem(mongoClient, "4e5355560364950fcb95449a", "item" + 0, "美食", "湘菜", "",
+            UserManager.addUserShoppingItem(mongoClient, "4e5355560364950fcb95449a", "item" + 0, "GROUPBUY", "美食", "湘菜", "",
                     "北京", 2000000f, 200000f, day.getTime());
-            UserManager.addUserShoppingItem(mongoClient, "4e5355560364950fcb95449a", "item" + 1, "西餐", "法国菜", "",
+            UserManager.addUserShoppingItem(mongoClient, "4e5355560364950fcb95449a", "item" + 1, "GROUPBUY", "西餐", "法国菜", "",
                     "广州", 2000000f, 1000000f, day.getTime());
 
         }
