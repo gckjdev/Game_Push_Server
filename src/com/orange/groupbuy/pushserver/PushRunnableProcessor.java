@@ -57,7 +57,7 @@ public class PushRunnableProcessor extends ScheduleServerProcessor {
             return true;
         }
         else {
-            log.warn("Current datetime is out of process time, can not process request.");
+            log.debug("Current datetime is out of process time, can not process request.");
             return false;
         }
     }

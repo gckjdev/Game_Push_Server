@@ -1,5 +1,7 @@
 package com.orange.groupbuy.pushserver;
 
+import java.util.Timer;
+
 import org.apache.log4j.Logger;
 
 import com.orange.common.mongodb.MongoDBClient;
@@ -35,6 +37,11 @@ public class PushServer {
 
         Thread server = new Thread(scheduleServer);
         server.start();
+        
+        // schedule reset user push counter timer
+        Timer resetUserPushCounterTimer = new Timer();
+        resetUserPushCounterTimer.schedule(new ResetUserPushCounterTimer(mongoClient), 
+                ResetUserPushCounterTimer.getTaskDate());    
     }
 
 }
