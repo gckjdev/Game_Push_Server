@@ -50,7 +50,18 @@ public class MongoDBData {
             ObjectId id = new ObjectId("4e5355560364950fcb95449a");
             obj.put(DBConstants.F_USERID, id);
             obj.put(DBConstants.F_PUSH_MESSAGE_TYPE, DBConstants.C_PUSH_TYPE_EMAIL);
+            obj.put(DBConstants.F_APPID, "GROUPBUY");
+            obj.put(DBConstants.F_DEVICEMODEL, "deviceModel");
+            obj.put(DBConstants.F_DEVICEID, "deviceId");
+            obj.put(DBConstants.F_DEVICEOS, "deviceOs");
+            obj.put(DBConstants.F_DEVICETOKEN, "deviceToken");
+            obj.put(DBConstants.F_LANGUAGE, "language");
+            obj.put(DBConstants.F_COUNTRYCODE, "countryCode");
+            obj.put(DBConstants.F_CREATE_DATE, new Date()); // DateUtil.currentDate());
+            obj.put(DBConstants.F_CREATE_SOURCE_ID, "sourceId");
+            obj.put(DBConstants.F_STATUS, DBConstants.STATUS_NORMAL);     
             mongoClient.insert(DBConstants.T_USER, obj);
+
 
             User user = UserManager.findUserByUserId(mongoClient, id.toString());
             user.setDeviceToke("a5bdd473afd091e9537aeef306a3a2992be9c11f4a198532c991be55d59eafe2");
@@ -62,9 +73,9 @@ public class MongoDBData {
             day.set(Calendar.DAY_OF_MONTH, 11);
 
             UserManager.addUserShoppingItem(mongoClient, "4e5355560364950fcb95449a", "item" + 0, "GROUPBUY", "美食", "湘菜", "",
-                    "北京", 2000000f, 200000f, day.getTime());
+                    "Peking", 2000000f, 200000f, day.getTime(), "7", "8", "9");
             UserManager.addUserShoppingItem(mongoClient, "4e5355560364950fcb95449a", "item" + 1, "GROUPBUY", "西餐", "法国菜", "",
-                    "广州", 2000000f, 1000000f, day.getTime());
+                    "Guangzhou", 2000000f, 1000000f, day.getTime(), "7", "8", "9");
 
         }
     }

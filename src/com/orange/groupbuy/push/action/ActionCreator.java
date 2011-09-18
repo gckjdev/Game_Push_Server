@@ -17,6 +17,7 @@ public class ActionCreator {
         case DBConstants.C_PUSH_TYPE_EMAIL:
             return new PushEmailMessage(pushMessage);
         case DBConstants.C_PUSH_TYPE_WEIBO:
+            //return new PushSinaWeiboMessage(pushMessage);
             break;
         }
         
