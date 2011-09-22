@@ -3,10 +3,9 @@ package com.orange.groupbuy.push.action;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
-
+import com.orange.common.apnsservice.ApnsService;
+import com.orange.common.apnsservice.BasicService;
 import com.orange.common.mongodb.MongoDBClient;
-import com.orange.common.urbanairship.BasicService;
-import com.orange.common.urbanairship.PushMessageService;
 import com.orange.groupbuy.constant.ErrorCode;
 import com.orange.groupbuy.constant.ServiceConstant;
 import com.orange.groupbuy.dao.App;
@@ -41,18 +40,30 @@ public class PushiPhoneMessage extends CommonAction {
             return ErrorCode.ERROR_APP_NOT_FOUND;
         }
         
-        String appKey = app.getPushAppKey();
-        String appSecret = app.getPushAppSecret();
-        String appMasterSecret = app.getPushAppMasterSecret();
-        if (appKey == null || appSecret == null || appMasterSecret == null){
-            log.error("send push message but app key/secret/master secret is null");
-            return ErrorCode.ERROR_APP_EMPTY_PUSH_INFO;            
+//        String appKey = app.getPushAppKey();
+//        String appSecret = app.getPushAppSecret();
+//        String appMasterSecret = app.getPushAppMasterSecret();
+//        if (appKey == null || appSecret == null || appMasterSecret == null){
+//            log.error("send push message but app key/secret/master secret is null");
+//            return ErrorCode.ERROR_APP_EMPTY_PUSH_INFO;            
+//        }
+//        
+//        BasicService pushService = PushMessageService.createService(appKey,
+//                                                                    appSecret,
+//                                                                    appMasterSecret,
+//                                                                    deviceToken, badge, alertMessage, sound, userInfo);
+        
+        String certificate = app.getCertificateFileName();
+        String password = app.getCertPassword();
+        if (certificate == null || password == null) {
+            String SEP = System.getProperty("file.separator");
+            certificate = System.getProperty("user.dir") + SEP + "certificate" + SEP + "groupbuy_push_development.p12";
+            password = "123456";
         }
         
-        BasicService pushService = PushMessageService.createService(appKey,
-                                                                    appSecret,
-                                                                    appMasterSecret,
-                                                                    deviceToken, badge, alertMessage, sound, userInfo);
+        BasicService pushService = ApnsService.createService(certificate,password,            
+                                                            deviceToken, badge, alertMessage, sound, userInfo);
+
         return pushService.handleServiceRequest();
     }
 
