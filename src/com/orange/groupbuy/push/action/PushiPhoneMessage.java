@@ -56,9 +56,13 @@ public class PushiPhoneMessage extends CommonAction {
         String certificate = app.getCertificateFileName();
         String password = app.getCertPassword();
         if (certificate == null || password == null) {
-            String SEP = System.getProperty("file.separator");
-            certificate = System.getProperty("user.dir") + SEP + "certificate" + SEP + "groupbuy_push_development.p12";
-            password = "123456";
+//            code below is mainly for test            
+//            String SEP = System.getProperty("file.separator");
+//            certificate = System.getProperty("user.dir") + SEP + "certificate" + SEP + "groupbuy_push_development.p12";
+//            password = "123456";
+            
+            log.error("send push message but cannot find push certificate for the app");
+            return ErrorCode.ERROR_APP_CERT_NOT_FOUND;
         }
         
         BasicService pushService = ApnsService.createService(certificate,password,            
