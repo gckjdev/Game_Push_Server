@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import com.orange.common.mongodb.MongoDBClient;
 import com.orange.common.processor.ScheduleServer;
 import com.orange.groupbuy.constant.DBConstants;
+import com.orange.groupbuy.push.apnsmanager.AppApnsManager;
 
 /**
  * The Class PushServer.
@@ -26,7 +27,11 @@ public class PushServer {
     public static MongoDBClient mongoClient = new MongoDBClient(DBConstants.D_GROUPBUY);
 
 
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws ClassNotFoundException {
+        
+        log.info("Create AnpsService... ");
+        AppApnsManager apnsManager = AppApnsManager.getInstance(mongoClient);
+        apnsManager.createApnsServiecs();
 
         log.info("PushServer start... version " + VERSION_STRING);
 

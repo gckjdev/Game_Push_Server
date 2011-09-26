@@ -18,5 +18,6 @@ public class PushConstants {
     public static final int END_DATE_HOUR_PM = 22;
     public static final int END_DATE_MINUTE_PM = 0;
 
-
+    public static final String PRODUCTION = "product";
+    public static final String DEVLOPMENT = "sandbox";
 }

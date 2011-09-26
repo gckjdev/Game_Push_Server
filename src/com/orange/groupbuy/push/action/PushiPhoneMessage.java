@@ -3,7 +3,9 @@ package com.orange.groupbuy.push.action;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
-import com.orange.common.apnsservice.ApnsService;
+
+import com.notnoop.apns.ApnsService;
+import com.orange.common.apnsservice.AppApnsService;
 import com.orange.common.apnsservice.BasicService;
 import com.orange.common.mongodb.MongoDBClient;
 import com.orange.groupbuy.constant.ErrorCode;
@@ -11,6 +13,7 @@ import com.orange.groupbuy.constant.ServiceConstant;
 import com.orange.groupbuy.dao.App;
 import com.orange.groupbuy.dao.PushMessage;
 import com.orange.groupbuy.manager.AppManager;
+import com.orange.groupbuy.push.apnsmanager.AppApnsManager;
 
 public class PushiPhoneMessage extends CommonAction {
 
@@ -52,9 +55,10 @@ public class PushiPhoneMessage extends CommonAction {
 //                                                                    appSecret,
 //                                                                    appMasterSecret,
 //                                                                    deviceToken, badge, alertMessage, sound, userInfo);
-        
-        String certificate = app.getCertificateFileName();
-        String password = app.getCertPassword();
+
+        /*        
+        String certificate = app.getDevCertificateFileName();
+        String password = app.getDevCertPassword();
         if (certificate == null || password == null) {
 //            code below is mainly for test            
 //            String SEP = System.getProperty("file.separator");
@@ -65,8 +69,20 @@ public class PushiPhoneMessage extends CommonAction {
             return ErrorCode.ERROR_APP_CERT_NOT_FOUND;
         }
         
-        BasicService pushService = ApnsService.createService(certificate,password,            
-                                                            deviceToken, badge, alertMessage, sound, userInfo);
+//        BasicService pushService = ApnsService.createService(certificate,password,            
+//                                                            deviceToken, badge, alertMessage, sound, userInfo);
+
+         */
+        
+        ApnsService apnsService = AppApnsManager.findApnsServiceByAppId(appId);
+        
+        if(apnsService == null) {
+            log.error("apnsService for appId "+appId+" not found");
+            return ErrorCode.ERROR_APNS_NOT_FOUND;
+        }
+        
+        BasicService pushService = AppApnsService.createService(apnsService,            
+                                    deviceToken, badge, alertMessage, sound, userInfo);
 
         return pushService.handleServiceRequest();
     }
