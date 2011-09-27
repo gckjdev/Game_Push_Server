@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
 import com.notnoop.apns.APNS;
@@ -18,11 +20,13 @@ import com.orange.groupbuy.pushserver.PushConstants;
 
 public class AppApnsManager {
     public MongoDBClient mongoClient;
-    public static Map<String, ApnsService> devServiceMap;
-    public static Map<String, ApnsService> productServiceMap;
+    public static Map<String, ApnsService> devServiceMap = new HashMap<String, ApnsService>();
+    public static Map<String, ApnsService> productServiceMap = new HashMap<String, ApnsService>();
     public static List<App> apps;
     public static AppApnsManager instance;
-    private static String apnsMode;
+    private static String apnsMode = PushConstants.DEVLOPMENT;
+    
+    static final Logger log = Logger.getLogger(AppApnsManager.class.getName()); 
 
     public AppApnsManager(MongoDBClient mongoClient) {
         super();
@@ -43,28 +47,28 @@ public class AppApnsManager {
     }
 
     private static void loadParams() {
-        if (!StringUtil.isEmpty(System.getProperty("apns")))
-        apnsMode = System.getProperty("apns");
+        if (!StringUtil.isEmpty(System.getProperty("apns"))){
+            apnsMode = System.getProperty("apns");
+        }
+        log.info("Current push server is in " + apnsMode);
     }
 
     public void createApnsServiecs() {
         ApnsService devService;
         ApnsService productService;
         for (App app : apps) {
+
             devService = APNS.newService().withCert(app.getDevCertificateFileName(), app.getDevCertPassword())
                     .withSandboxDestination().build();
+            devServiceMap.put(app.getAppId(), devService);
+            log.info("Create APNS Development service with "+app.getDevCertificateFileName()+
+                    ", "+app.getDevCertPassword());
 
             productService = APNS.newService().withCert(app.getProductCertificateFileName(), app.getProductCertPassword())
-                    .withProductionDestination().build();
-            
-            if(devServiceMap == null){
-                devServiceMap = new HashMap<String, ApnsService>();
-            }
-            if(productServiceMap == null){
-                productServiceMap = new HashMap<String, ApnsService>();
-            }
-            devServiceMap.put(app.getAppId(), devService);
-            productServiceMap.put(app.getAppId(), productService);
+                    .withProductionDestination().build();                        
+            productServiceMap.put(app.getAppId(), productService);            
+            log.info("Create APNS Production service with "+app.getProductCertificateFileName()+
+                    ", "+app.getProductCertPassword());
         }
     }
 
