@@ -1,6 +1,7 @@
-package com.orange.groupbuy.push.action;
+package com.orange.game.push.action;
 
-import com.orange.groupbuy.dao.PushMessage;
+import com.orange.game.model.dao.PushMessage;
+
 
 public abstract class CommonAction {
 

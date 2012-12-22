@@ -1,4 +1,4 @@
-package com.orange.groupbuy.pushserver;
+package com.orange.game.pushserver;
 
 
 import java.util.Calendar;
@@ -15,9 +15,9 @@ import org.junit.Test;
 import com.mongodb.BasicDBObject;
 import com.orange.common.mongodb.MongoDBClient;
 import com.orange.common.utils.DateUtil;
-import com.orange.groupbuy.constant.DBConstants;
-import com.orange.groupbuy.dao.User;
-import com.orange.groupbuy.manager.UserManager;
+import com.orange.game.constants.DBConstants;
+import com.orange.game.model.dao.User;
+import com.orange.game.model.manager.UserManager;
 
 public class MongoDBData {
 
@@ -64,7 +64,7 @@ public class MongoDBData {
 
 
             User user = UserManager.findUserByUserId(mongoClient, id.toString());
-            user.setDeviceToke("a5bdd473afd091e9537aeef306a3a2992be9c11f4a198532c991be55d59eafe2");
+            user.setDeviceToken("a5bdd473afd091e9537aeef306a3a2992be9c11f4a198532c991be55d59eafe2");
             UserManager.save(mongoClient, user);
 
             TimeZone timeZone = TimeZone.getTimeZone("GMT+0800");

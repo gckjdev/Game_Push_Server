@@ -1,4 +1,4 @@
-package com.orange.groupbuy.push.action;
+package com.orange.game.push.action;
 
 public class PushSinaWeiboMessage extends CommonAction {
 

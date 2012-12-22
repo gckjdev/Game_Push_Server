@@ -1,4 +1,4 @@
-package com.orange.groupbuy.pushserver;
+package com.orange.game.pushserver;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 
 import com.orange.common.mongodb.MongoDBClient;
 import com.orange.common.utils.DateUtil;
-import com.orange.groupbuy.manager.UserManager;
+import com.orange.game.model.manager.UserManager;
 
 public class ResetUserPushCounterTimer extends TimerTask {
 

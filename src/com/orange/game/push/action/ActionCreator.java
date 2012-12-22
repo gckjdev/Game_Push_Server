@@ -1,8 +1,8 @@
-package com.orange.groupbuy.push.action;
+package com.orange.game.push.action;
 
 import com.orange.common.mongodb.MongoDBClient;
-import com.orange.groupbuy.constant.DBConstants;
-import com.orange.groupbuy.dao.PushMessage;
+import com.orange.game.constants.DBConstants;
+import com.orange.game.model.dao.PushMessage;
 
 public class ActionCreator {
 

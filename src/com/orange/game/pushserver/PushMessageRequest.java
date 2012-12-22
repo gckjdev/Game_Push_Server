@@ -1,4 +1,4 @@
-package com.orange.groupbuy.pushserver;
+package com.orange.game.pushserver;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -10,14 +10,12 @@ import com.orange.common.processor.BasicProcessorRequest;
 import com.orange.common.processor.CommonProcessor;
 import com.orange.common.urbanairship.BasicService;
 import com.orange.common.urbanairship.PushMessageService;
-import com.orange.groupbuy.constant.DBConstants;
-import com.orange.groupbuy.constant.ErrorCode;
-import com.orange.groupbuy.constant.PushNotificationConstants;
-import com.orange.groupbuy.constant.ServiceConstant;
-import com.orange.groupbuy.dao.PushMessage;
-import com.orange.groupbuy.manager.PushMessageManager;
-import com.orange.groupbuy.push.action.ActionCreator;
-import com.orange.groupbuy.push.action.CommonAction;
+import com.orange.game.constants.DBConstants;
+import com.orange.game.constants.ErrorCode;
+import com.orange.game.model.dao.PushMessage;
+import com.orange.game.model.manager.PushMessageManager;
+import com.orange.game.push.action.ActionCreator;
+import com.orange.game.push.action.CommonAction;
 
 /**
  * The Class PushMessageRequest.

@@ -1,7 +1,7 @@
-package com.orange.groupbuy.push.action;
+package com.orange.game.push.action;
 
 import com.orange.common.mail.CommonMailSender;
-import com.orange.groupbuy.dao.PushMessage;
+import com.orange.game.model.dao.PushMessage;
 
 public class PushEmailMessage extends CommonAction {
 

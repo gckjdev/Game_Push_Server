@@ -1,11 +1,11 @@
-package com.orange.groupbuy.pushserver;
+package com.orange.game.pushserver;
 
 import com.orange.common.mongodb.MongoDBClient;
 import com.orange.common.processor.BasicProcessorRequest;
 import com.orange.common.processor.ScheduleServerProcessor;
 import com.orange.common.utils.DateUtil;
-import com.orange.groupbuy.dao.PushMessage;
-import com.orange.groupbuy.manager.PushMessageManager;
+import com.orange.game.model.dao.PushMessage;
+import com.orange.game.model.manager.PushMessageManager;
 
 public class PushRunnableProcessor extends ScheduleServerProcessor {
 

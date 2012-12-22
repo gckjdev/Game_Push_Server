@@ -1,4 +1,4 @@
-package com.orange.groupbuy.pushserver;
+package com.orange.game.pushserver;
 
 /**
  * The Class PushConstants.

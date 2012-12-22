@@ -1,4 +1,4 @@
-package com.orange.groupbuy.pushserver;
+package com.orange.game.pushserver;
 
 import java.util.Timer;
 
@@ -6,8 +6,7 @@ import org.apache.log4j.Logger;
 
 import com.orange.common.mongodb.MongoDBClient;
 import com.orange.common.processor.ScheduleServer;
-import com.orange.groupbuy.constant.DBConstants;
-import com.orange.groupbuy.push.apnsmanager.AppApnsManager;
+import com.orange.game.constants.DBConstants;
 
 /**
  * The Class PushServer.
@@ -24,16 +23,12 @@ public class PushServer {
 
     public static final Logger log = Logger.getLogger(PushServer.class.getName());
 
-    public static MongoDBClient mongoClient = new MongoDBClient(DBConstants.D_GROUPBUY);
+    public static MongoDBClient mongoClient = new MongoDBClient(DBConstants.D_GAME);
 
 
     public static void main(final String[] args) throws ClassNotFoundException {
         
-        log.info("Create AnpsService... ");
-        AppApnsManager apnsManager = AppApnsManager.getInstance(mongoClient);
-        apnsManager.createApnsServiecs();
-
-        log.info("PushServer start... version " + VERSION_STRING);
+        log.info("Game Push Server start... version " + VERSION_STRING);
 
         ScheduleServer scheduleServer = new ScheduleServer(new PushRunnableProcessor(mongoClient));
         scheduleServer.setFrequency(MAX_PUSH_PER_SECOND);
