@@ -46,11 +46,6 @@ public class PushMessageRequest extends BasicProcessorRequest {
                 "]";
     }
 
-
-
-    /* (non-Javadoc)
-     * @see com.orange.common.processor.BasicProcessorRequest@execute
-     */
     @Override
     public void execute(CommonProcessor mainProcessor) {
 
@@ -61,8 +56,7 @@ public class PushMessageRequest extends BasicProcessorRequest {
     	try {
     	    result = sendMessage();
             if (result != ErrorCode.ERROR_SUCCESS) {
-                log.warn("Fail to push message, productId=" + pushMessage.getProductId() +
-                        ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken() 
+                log.warn("Fail to push message, userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken() 
                         + ", result=" + result);
                 setPushMessageStatisticData(pushMessage);
                 
@@ -75,7 +69,7 @@ public class PushMessageRequest extends BasicProcessorRequest {
                 return;
             }
             else if (result == ErrorCode.ERROR_SUCCESS) {
-                log.info("Push message OK!, productId=" + pushMessage.getProductId() +
+                log.info("Push message OK!"+
                         ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
 
                 setPushMessageStatisticData(pushMessage);
@@ -124,9 +118,8 @@ public class PushMessageRequest extends BasicProcessorRequest {
                 pushCounter = 0;
             }
         }
-        catch (InterruptedException e) {
-            log.fatal("<ScheduleServer> catch Exception while running. exception=" + e.toString());
-            e.printStackTrace();
+        catch (Exception e) {
+            log.fatal("<flowControl> catch Exception while running. exception=" + e.toString(), e);
         }
     }
 
