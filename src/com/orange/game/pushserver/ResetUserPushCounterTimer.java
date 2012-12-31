@@ -6,16 +6,14 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
-
+import com.orange.common.log.ServerLog;
 import com.orange.common.mongodb.MongoDBClient;
 import com.orange.common.utils.DateUtil;
 import com.orange.game.model.manager.UserManager;
 
 public class ResetUserPushCounterTimer extends TimerTask {
 
-    static final Logger log = Logger.getLogger(ResetUserPushCounterTimer.class.getName()); 
-    MongoDBClient mongoClient;
+    private final MongoDBClient mongoClient;
     
     public ResetUserPushCounterTimer(MongoDBClient mongoClient) {
         super();
@@ -26,7 +24,7 @@ public class ResetUserPushCounterTimer extends TimerTask {
     public void run() {
         
         // reset all push counter of user to 0 and push date to null
-        log.info("<ResetUserPushCounterTimer> timer fired");
+        ServerLog.info(0, "<ResetUserPushCounterTimer> Timer fired, reset push counter to 0, and reset push date to null");
         UserManager.resetPushCounter(mongoClient);
         
         // set next timer
@@ -35,7 +33,7 @@ public class ResetUserPushCounterTimer extends TimerTask {
                 ResetUserPushCounterTimer.getTaskDate());
     }
     
-    static public Date getTaskDate(){
+   public static Date getTaskDate(){
         
         int scheduleHour = 0;       // 0 AM of the day
         
@@ -45,14 +43,14 @@ public class ResetUserPushCounterTimer extends TimerTask {
         
         if (now.get(Calendar.HOUR_OF_DAY) >= scheduleHour){
             now.add(Calendar.DAY_OF_MONTH, 1);
-        }
+          }
         
         now.set(Calendar.HOUR_OF_DAY, scheduleHour);
         now.set(Calendar.MINUTE, 0);
         now.set(Calendar.SECOND, 0);
         now.set(Calendar.MILLISECOND, 0);               
         
-        log.info("<ResetUserPushCounterTimer> next timer set to "+now.getTime().toString());        
+        ServerLog.info(0, "<ResetUserPushCounterTimer> next timer set to "+now.getTime().toString());        
         return now.getTime();
     }
     

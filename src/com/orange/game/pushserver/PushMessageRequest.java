@@ -1,15 +1,11 @@
 package com.orange.game.pushserver;
 
 import java.util.Date;
-import java.util.HashMap;
-
 import org.apache.log4j.Logger;
 
 import com.orange.common.mongodb.MongoDBClient;
 import com.orange.common.processor.BasicProcessorRequest;
 import com.orange.common.processor.CommonProcessor;
-import com.orange.common.urbanairship.BasicService;
-import com.orange.common.urbanairship.PushMessageService;
 import com.orange.game.constants.DBConstants;
 import com.orange.game.constants.ErrorCode;
 import com.orange.game.model.dao.PushMessage;
@@ -17,9 +13,6 @@ import com.orange.game.model.manager.PushMessageManager;
 import com.orange.game.push.action.ActionCreator;
 import com.orange.game.push.action.CommonAction;
 
-/**
- * The Class PushMessageRequest.
- */
 public class PushMessageRequest extends BasicProcessorRequest {
 
     public static final int MAX_PUSH_PER_SECOND = 3;
@@ -49,36 +42,33 @@ public class PushMessageRequest extends BasicProcessorRequest {
     @Override
     public void execute(CommonProcessor mainProcessor) {
 
-        mongoClient = mainProcessor.getMongoDBClient();
+      mongoClient = mainProcessor.getMongoDBClient();
 
     	startTime = new Date();
 
     	try {
     	    result = sendMessage();
-            if (result != ErrorCode.ERROR_SUCCESS) {
-                log.warn("Fail to push message, userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken() 
+          if (result != ErrorCode.ERROR_SUCCESS) {
+              log.warn("Fail to push message, userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken() 
                         + ", result=" + result);
-                setPushMessageStatisticData(pushMessage);
+              setPushMessageStatisticData(pushMessage);
                 
-                if (canRetry(result)){
-                    PushMessageManager.pushMessageRetry(mongoClient, pushMessage, result);
-                }
-                else {
-                    PushMessageManager.pushMessageClose(mongoClient, pushMessage, result);                    
-                }
-                return;
+              if (canRetry(result)){
+                  PushMessageManager.pushMessageRetry(mongoClient, pushMessage, result);
+              } else {
+                  PushMessageManager.pushMessageClose(mongoClient, pushMessage, result);                    
+                   }
+              return;
             }
-            else if (result == ErrorCode.ERROR_SUCCESS) {
-                log.info("Push message OK!"+
+         else if (result == ErrorCode.ERROR_SUCCESS) {
+              log.info("Push message OK!"+
                         ", userId=" + pushMessage.getUserId() + ", deviceToken=" + pushMessage.getDeviceToken());
 
-                setPushMessageStatisticData(pushMessage);
-                PushMessageManager.pushMessageClose(mongoClient, pushMessage, result);
+              setPushMessageStatisticData(pushMessage);
+              PushMessageManager.pushMessageClose(mongoClient, pushMessage, result);
             }
-
-            flowControl();
-    	}
-    	catch (Exception e) {
+         flowControl();
+    	} catch (Exception e) {
             log.error("process message = " + pushMessage.toString() + ", but catch exception = " + e.toString(), e);
             PushMessageManager.pushMessageRetry(mongoClient, pushMessage, ErrorCode.ERROR_GENERAL_EXCEPTION);
         }    	
@@ -106,7 +96,7 @@ public class PushMessageRequest extends BasicProcessorRequest {
 
             if (pushCounter == 1) {
                 startCouterTime = System.currentTimeMillis();
-            }
+                }
 
             if (pushCounter == MAX_PUSH_PER_SECOND) {
                 long duration = System.currentTimeMillis() - startCouterTime;
@@ -114,13 +104,12 @@ public class PushMessageRequest extends BasicProcessorRequest {
                     long sleepTime = SLEEP_INTERVAL - duration;
                     log.info("PushServer sleep " + sleepTime + " ms for flow control, push count = " + pushCounter);
                     Thread.sleep(sleepTime);
-                }
+                      }
                 pushCounter = 0;
-            }
-        }
-        catch (Exception e) {
+               }
+        } catch (Exception e) {
             log.fatal("<flowControl> catch Exception while running. exception=" + e.toString(), e);
-        }
+           }
     }
 
     private void setPushMessageStatisticData(final PushMessage message) {

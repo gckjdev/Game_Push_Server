@@ -32,7 +32,7 @@ public class PushRunnableProcessor extends ScheduleServerProcessor {
         if (pushMessage == null) {
             log.debug("No message to push.");
             return null;
-        }
+          }
         PushMessageRequest request = new PushMessageRequest(pushMessage);
         return request;
     }
@@ -46,20 +46,18 @@ public class PushRunnableProcessor extends ScheduleServerProcessor {
         if (DateUtil.isMiddleDate(PushConstants.START_DATE_HOUR_AM, PushConstants.START_DATE_MINUTE_AM, 
                 PushConstants.END_DATE_HOUR_AM, PushConstants.END_DATE_MINUTE_AM, DateUtil.CHINA_TIMEZONE)) {
             isMiddleAM =  true;
-        }
-
+           }
         if (DateUtil.isMiddleDate(PushConstants.START_DATE_HOUR_PM, PushConstants.START_DATE_MINUTE_PM, 
                 PushConstants.END_DATE_HOUR_PM, PushConstants.END_DATE_MINUTE_PM, DateUtil.CHINA_TIMEZONE)) {
             isMiddlePM = true;
-        }
+           }
 
         if (isMiddleAM || isMiddlePM) {
             return true;
-        }
-        else {
+        }else {
             log.debug("Current datetime is out of process time, can not process request.");
             return false;
-        }
+          }
     }
 
 }
