@@ -7,7 +7,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.orange.common.db.MongoDBExecutor;
 import com.orange.common.log.ServerLog;
@@ -25,7 +24,6 @@ public class PushMessageGenerator {
      private final static GameDBService dbService = GameDBService.getInstance();
      private final static MongoDBClient dbClient = dbService.getMongoDBClient(0);
     
-     private final static DBCursor userTableCursor = UserManager.iterator(dbClient);
      private static int success = 0;
      
      public PushMessageGenerator(String message) {
@@ -40,7 +38,7 @@ public class PushMessageGenerator {
             
             @Override
             public void run() {
-                List<DBObject> userList = UserManager.iterator(dbClient).skip(offset).limit(size).toArray();
+                List<DBObject> userList = UserManager.findUsersByRange(dbClient, offset, size);
                 if ( userList != null ) {
                    ServerLog.info(0, "Start to insert pushing message for DBobject from "+offset +" to "+(offset+size-1));
                    for ( int i = 0; i < userList.size(); i++) {
@@ -60,7 +58,7 @@ public class PushMessageGenerator {
      
      public void doCreateMessage(int granularity) throws Throwable {
         
-         final int count = userTableCursor.count();
+         final int count = UserManager.getTotalUsersCount(dbClient);
          if ( granularity < 0 ) {
              ServerLog.info(0, "<PushMessageGenerator> An invalid granularity supplied, bailing out !");
              return;
@@ -100,7 +98,7 @@ public class PushMessageGenerator {
            } finally {
                ServerLog.info(0, "<PushMessageGenerator> Total time: " + (end - start) / 1000 / 60  +" minutes "+
                    (end - start) / 1000 % 60 +" seconds . Success : " + success);
-               if ( success != userTableCursor.count()) {
+               if ( success != UserManager.getTotalUsersCount(dbClient)) {
                    ServerLog.info(0, "<PushMessageGenerator> Fail during creating messages.");
                    isDone = false;
                     }

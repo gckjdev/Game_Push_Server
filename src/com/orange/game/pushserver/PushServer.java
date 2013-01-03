@@ -23,22 +23,19 @@ public class PushServer {
 
     public static void main(final String[] args)  {
         
-        ServerLog.info(0, "Game Push Server starting..."); 
-
         String createMessage = System.getProperty("create_message");
-        String message = System.getProperty("message");
-        if ( createMessage != null && !createMessage.isEmpty()) {
-            if ( message == null || createMessage.isEmpty() ) {
-               ServerLog.error(0, new NullArgumentException("<PushServer> message should not be empty"));
-               return ;
-                }
-            PushMessageGenerator psg = new PushMessageGenerator(message);
-            Boolean isDone = psg.creageMessage(GRANULARITY);
-            if (!isDone) {
-                return;
-                }
-           }
         
+        if ( createMessage != null && !createMessage.isEmpty()) {      
+            createPushMessage();
+        } else {
+            runPushServer();    
+           }
+    }
+
+
+    private static void runPushServer() {
+        
+        ServerLog.info(0, "Game Push Server starting..."); 
         ScheduleServer scheduleServer = new ScheduleServer(new PushRunnableProcessor(mongoClient));
         scheduleServer.setFrequency(MAX_PUSH_PER_SECOND);
         scheduleServer.setThreadNum(MAX_THREAD_NUM);
@@ -50,7 +47,20 @@ public class PushServer {
         // set timer to reset user push counter
         Timer resetUserPushCounterTimer = new Timer();
         resetUserPushCounterTimer.schedule(new ResetUserPushCounterTimer(mongoClient), 
-                ResetUserPushCounterTimer.getTaskDate());    
+                ResetUserPushCounterTimer.getTaskDate());
+    }
+
+
+    private static void createPushMessage() {
+        
+        String message = System.getProperty("message");
+        
+        if ( message == null || message.isEmpty() ) {
+            ServerLog.error(0, new NullArgumentException("<PushServer> message should not be empty"));
+            return ;
+           }
+        PushMessageGenerator psg = new PushMessageGenerator(message);
+        psg.creageMessage(GRANULARITY);
     }
 
 }
